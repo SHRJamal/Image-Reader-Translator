@@ -43,15 +43,5 @@
         android:layout_margin="16dp" />
 
 
-    <!--ADS LAYOUT-->
-    <fragment
-        android:name="com.asisdroid.oneindialanguage.FragmentAd"
-        android:id="@+id/fragment_ads4"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.asisdroid.oneindialanguage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -43,11 +44,11 @@ public class Binarization extends AppCompatActivity implements View.OnClickListe
         /*toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ViewCompat.setElevation(toolbar,10);*/
-        ViewCompat.setElevation((LinearLayout) findViewById(R.id.extension),10);
-        spinner = (Spinner) findViewById(R.id.language);
+        ViewCompat.setElevation(findViewById(R.id.extension),10);
+        spinner = findViewById(R.id.language);
 
-        img = (ImageView) findViewById(R.id.croppedImage);
-        fab = (FloatingActionButton) findViewById(R.id.nextStep);
+        img = findViewById(R.id.croppedImage);
+        fab = findViewById(R.id.nextStep);
         fab.setOnClickListener(this);
         pix = com.googlecode.leptonica.android.ReadFile.readBitmap(CropAndRotate.croppedImage);
 
@@ -62,7 +63,7 @@ public class Binarization extends AppCompatActivity implements View.OnClickListe
         languageList.add("Tamil");
         languageList.add("Telugu");*/
 
-        final ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,languageList);
+        final ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, languageList);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -87,8 +88,8 @@ public class Binarization extends AppCompatActivity implements View.OnClickListe
             threshold += 20;
             umbralization = com.googlecode.leptonica.android.WriteFile.writeBitmap(GrayQuant.pixThresholdToBinary(pix, threshold));
             img.setImageBitmap(umbralization);
-            seekBar = (AppCompatSeekBar) findViewById(R.id.umbralization);
-            seekBar.setProgress(Integer.valueOf((50 * threshold) / 254));
+            seekBar = findViewById(R.id.umbralization);
+            seekBar.setProgress((50 * threshold) / 254);
             seekBar.setOnSeekBarChangeListener(this);
         }
         catch(Exception e){
@@ -110,7 +111,7 @@ public class Binarization extends AppCompatActivity implements View.OnClickListe
     public void onStopTrackingTouch(SeekBar seekBar) {
 
         umbralization = com.googlecode.leptonica.android.WriteFile.writeBitmap(
-                GrayQuant.pixThresholdToBinary(pix, Integer.valueOf(((254 * seekBar.getProgress())/50)))
+                GrayQuant.pixThresholdToBinary(pix, ((254 * seekBar.getProgress()) / 50))
         );
         img.setImageBitmap(umbralization);
 
@@ -133,24 +134,15 @@ public class Binarization extends AppCompatActivity implements View.OnClickListe
 
     private boolean checkInternetConenction() {
         // get Connectivity Manager object to check connection
+        getBaseContext();
         ConnectivityManager connec
-                =(ConnectivityManager)getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+                =(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
 
-        NetworkInfo info = connec.getActiveNetworkInfo();
+        //NetworkInfo info = connec.getActiveNetworkInfo();
 
         // Check for network connections
-        if ( connec.getNetworkInfo(0).getState() ==
-                android.net.NetworkInfo.State.CONNECTED ||
-                connec.getNetworkInfo(0).getState() ==
-                        android.net.NetworkInfo.State.CONNECTING ||
-                connec.getNetworkInfo(1).getState() ==
-                        android.net.NetworkInfo.State.CONNECTING ||
-                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTED ) {
-
-            // Only update if WiFi or 3G is connected and not roaming
-
-            return true;
-        }
-        return false;
+        // Only update if WiFi or 3G is connected and not roaming
+        return connec.getNetworkInfo(0).isConnected()||
+                connec.getNetworkInfo(1).isConnected();
     }
 }

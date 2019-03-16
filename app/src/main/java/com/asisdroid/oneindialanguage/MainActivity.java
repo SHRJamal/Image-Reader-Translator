@@ -54,7 +54,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     // todo API_KEY should not be stored in plain sight
-    private static final String API_KEY = "AIzaSyA7KqEUjfE-SNnB83dGD5xe4g5o9DpRLls";
+    private static final String API_KEY = "AIzaSyB_3Mb";
     final Handler textViewHandler = new Handler();
 
     Spinner spn_fromLang, spn_toLang;
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                         convertLang();
                 }
                 else{ //No internet
-
+                    closeProgressDialog();
                         Toast.makeText(MainActivity.this, "Cannot proceed without internet connection!", Toast.LENGTH_LONG).show();
                 }
             }
