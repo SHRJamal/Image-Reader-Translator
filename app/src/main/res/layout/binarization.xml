@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -15,14 +15,14 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <android.support.v7.widget.AppCompatSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/language"
             android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"/>
 
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
     <LinearLayout
         android:id="@+id/extension"
         android:padding="35dp"
@@ -38,7 +38,7 @@
             android:textSize="13sp"
             android:textColor="@color/colorTitle"
             />
-        <android.support.v7.widget.AppCompatSeekBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/umbralization"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/warningText" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/nextStep"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

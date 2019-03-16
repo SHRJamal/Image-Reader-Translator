@@ -1,6 +1,7 @@
 package com.asisdroid.oneindialanguage;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -11,7 +12,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -22,19 +22,14 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,11 +39,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
 import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.Translate.TranslateOption;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 /*
@@ -57,14 +48,7 @@ import com.google.api.translate.Language;
 import com.google.api.translate.Translate;*/
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -86,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private Uri outputFileUri;
     public final static String EXTRA_MESSAGE = "com.ltapps.textscanner.message";
 
-    public static InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,21 +91,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initUI(){
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getResources().getString(R.string.admobInterstetialunitID));
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
         progress = new ProgressDialog(this);
         progress.setCancelable(false);
 
-        spn_fromLang = (Spinner) findViewById(R.id.spn_fromLang);
-        spn_toLang = (Spinner) findViewById(R.id.spn_toLang);
+        spn_fromLang = findViewById(R.id.spn_fromLang);
+        spn_toLang = findViewById(R.id.spn_toLang);
 
-        edt_fromLang = (EditText) findViewById(R.id.edt_fromLang);
-        edt_toLang = (EditText) findViewById(R.id.edt_toLang);
+        edt_fromLang = findViewById(R.id.edt_fromLang);
+        edt_toLang = findViewById(R.id.edt_toLang);
 
-        btn_chooseImg = (Button) findViewById(R.id.btn_fromLangImage);
-        btn_convert = (Button) findViewById(R.id.btn_convert);
+        btn_chooseImg = findViewById(R.id.btn_fromLangImage);
+        btn_convert = findViewById(R.id.btn_convert);
 
         progressD = new ProgressDialog(this);
         progressD.setCancelable(false);
@@ -159,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         permissionStatus = getSharedPreferences("imagereaderpermissionStatuse2",MODE_PRIVATE);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void initEvents(){
         spn_fromLang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -198,66 +179,13 @@ public class MainActivity extends AppCompatActivity {
                 closeKeyboard();
                 showProgressDialog("Converting...");
                 if(checkInternetConenction()) { //Internet connected
-                    if(mInterstitialAd.isLoaded()){
-                        mInterstitialAd.show();
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdLoaded() {
-                                // Code to be executed when an ad finishes loading.
-
-                            }
-
-                            @Override
-                            public void onAdFailedToLoad(int errorCode) {
-                                // Code to be executed when an ad request fails.
-                            }
-
-                            @Override
-                            public void onAdOpened() {
-                                // Code to be executed when the ad is displayed.
-                            }
-
-                            @Override
-                            public void onAdLeftApplication() {
-                                // Code to be executed when the user has left the app.
-                            }
-
-                            @Override
-                            public void onAdClosed() {
-                                // Code to be executed when when the interstitial ad is closed.
-                                closeProgressDialog();
-                                if(checkInternetConenction()) {
-                                    closeKeyboard();
-                                    convertLang();
-                                }
-                                else{
-                                    Toast.makeText(MainActivity.this, "Cannot proceed without internet connection!", Toast.LENGTH_LONG).show();
-                                }
-                                mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                            }
-                        });
-                    }
-                    else{
-                        closeProgressDialog();
-                        if(checkInternetConenction()) {
-                            closeKeyboard();
-                            convertLang();
-                        }
-                        else{
-                            Toast.makeText(MainActivity.this, "Cannot proceed without internet connection!", Toast.LENGTH_LONG).show();
-                        }
-                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                    }
-                }
-                else{ //No internet
                     closeProgressDialog();
-                    if(checkInternetConenction()) {
                         closeKeyboard();
                         convertLang();
-                    }
-                    else{
+                }
+                else{ //No internet
+
                         Toast.makeText(MainActivity.this, "Cannot proceed without internet connection!", Toast.LENGTH_LONG).show();
-                    }
                 }
             }
         });
@@ -268,44 +196,9 @@ public class MainActivity extends AppCompatActivity {
                 closeKeyboard();
                 showProgressDialog("Loading...");
                 if(checkInternetConenction()) { //Internet connected
-                    if(mInterstitialAd.isLoaded()){
-                        mInterstitialAd.show();
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdLoaded() {
-                                // Code to be executed when an ad finishes loading.
 
-                            }
-
-                            @Override
-                            public void onAdFailedToLoad(int errorCode) {
-                                // Code to be executed when an ad request fails.
-                            }
-
-                            @Override
-                            public void onAdOpened() {
-                                // Code to be executed when the ad is displayed.
-                            }
-
-                            @Override
-                            public void onAdLeftApplication() {
-                                // Code to be executed when the user has left the app.
-                            }
-
-                            @Override
-                            public void onAdClosed() {
-                                // Code to be executed when when the interstitial ad is closed.
-                                closeProgressDialog();
-                                askPermissions();
-                                mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                            }
-                        });
-                    }
-                    else{
                         closeProgressDialog();
                         askPermissions();
-                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                    }
                 }
                 else{ //No internet
                     closeProgressDialog();
@@ -386,19 +279,14 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo info = connec.getActiveNetworkInfo();
 
         // Check for network connections
-        if ( connec.getNetworkInfo(0).getState() ==
-                android.net.NetworkInfo.State.CONNECTED ||
+        // Only update if WiFi or 3G is connected and not roaming
+        return connec.getNetworkInfo(0).getState() ==
+                NetworkInfo.State.CONNECTED ||
                 connec.getNetworkInfo(0).getState() ==
-                        android.net.NetworkInfo.State.CONNECTING ||
+                        NetworkInfo.State.CONNECTING ||
                 connec.getNetworkInfo(1).getState() ==
-                        android.net.NetworkInfo.State.CONNECTING ||
-                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTED ) {
-
-            // Only update if WiFi or 3G is connected and not roaming
-
-            return true;
-        }
-        return false;
+                        NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
     }
 
     public void askPermissions(){
@@ -454,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
 
                 SharedPreferences.Editor editor = permissionStatus.edit();
                 editor.putBoolean(Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
-                editor.commit();
+                editor.apply();
 
 
             } else {
@@ -488,6 +376,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class ConvertLanguageOperation extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
@@ -580,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    selectedImageUri = data == null ? null : data.getData();
+                    selectedImageUri = data.getData();
                     nextStep(selectedImageUri.toString());
                 }
             }
